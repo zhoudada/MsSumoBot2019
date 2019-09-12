@@ -39,10 +39,28 @@ namespace SumoBotController
             "System.Devices.Aep.Bluetooth.Le.IsConnectable"
         };
 
+        private readonly Dictionary<Windows.System.VirtualKey, Char> _keyboardMap =
+            new Dictionary<Windows.System.VirtualKey, char>
+            {
+                { Windows.System.VirtualKey.W, 'f' },
+                { Windows.System.VirtualKey.S, 's' },
+                { Windows.System.VirtualKey.X, 'b' },
+                { Windows.System.VirtualKey.A, 'l' },
+                { Windows.System.VirtualKey.D, 'r' },
+                { Windows.System.VirtualKey.Q, 'q' },
+                { Windows.System.VirtualKey.E, 'e' },
+                { Windows.System.VirtualKey.Z, 'z' },
+                { Windows.System.VirtualKey.C, 'c' },
+                { Windows.System.VirtualKey.U, 'u' },
+                { Windows.System.VirtualKey.I, 'i' },
+                { Windows.System.VirtualKey.O, 'o' },
+        };
+
         private bool _isConnected;
         private BluetoothLEDevice _selectedDevice = null;
         private DeviceWatcher _watcher = null;
         private GattCharacteristic _characteristc = null;
+        private readonly KeyManager _keyManager = new KeyManager();
 
         public void OnSuspended()
         {
@@ -62,6 +80,9 @@ namespace SumoBotController
             _characteristc = null;
 
             _isConnected = false;
+
+            _keyManager.KeyPressed -= OnKeyDown;
+            _keyManager.KeyReleased -= OnKeyUp;
         }
 
         public void OnResumed()
@@ -120,6 +141,9 @@ namespace SumoBotController
                     }
                 }
             }
+
+            _keyManager.KeyPressed += OnKeyDown;
+            _keyManager.KeyReleased += OnKeyUp;
         }
 
         public MainPage()
@@ -199,7 +223,7 @@ namespace SumoBotController
 
         private async void RB_Pressed(object sender, PointerRoutedEventArgs e)
         {
-            await Write('b');
+            await Write('c');
         }
 
         private async void RB_Released(object sender, PointerRoutedEventArgs e)
@@ -240,6 +264,32 @@ namespace SumoBotController
         private async void Low_Clicked(object sender, RoutedEventArgs e)
         {
             await Write('o');
+        }
+
+        private async void Key_Down(object sender, KeyRoutedEventArgs e)
+        {
+            await _keyManager.OnKeyPressed(sender, e.Key);
+        }
+
+        private async void Key_Up(object sender, KeyRoutedEventArgs e)
+        {
+            await _keyManager.OnKeyReleased(sender, e.Key);
+        }
+
+        private async Task OnKeyDown(object sender, Windows.System.VirtualKey key)
+        {
+            char command;
+            if (!_keyboardMap.TryGetValue(key, out command))
+            {
+                return;
+            }
+
+            await Write(command);
+        }
+
+        private async Task OnKeyUp(object sender, Windows.System.VirtualKey key)
+        {
+            await Write('s');
         }
     }
 }

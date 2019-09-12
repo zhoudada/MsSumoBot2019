@@ -120,6 +120,7 @@
     </Compile>
     <Compile Include="CustomButton.cs" />
     <Compile Include="Helper.cs" />
+    <Compile Include="KeyManager.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
