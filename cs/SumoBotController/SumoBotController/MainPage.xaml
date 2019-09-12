@@ -1,0 +1,58 @@
+﻿<Page
+    x:Class="SumoBotController.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:SumoBotController"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid>
+        <local:CustomButton x:Name="clickButton" ClickMode="Press" 
+                            Content="Forward" 
+                            Pressed="Forward_Pressed" 
+                            Released="Forward_Released" Margin="382,225,0,0" VerticalAlignment="Top" Height="106" Width="121"/>
+        <local:CustomButton x:Name="clickButton_Copy" ClickMode="Press" 
+            Content="Stop" 
+            Pressed="Stop_Pressed" 
+            Released="Stop_Released" Margin="382,368,0,0" VerticalAlignment="Top" Height="98" Width="121"/>
+        <local:CustomButton x:Name="clickButton_Copy1" ClickMode="Press" 
+            Content="Back" 
+            Pressed="Back_Pressed" 
+            Released="Back_Released" Margin="382,500,0,0" VerticalAlignment="Top" Height="97" Width="121"/>
+        <local:CustomButton x:Name="clickButton_Copy2" ClickMode="Press" 
+            Content="LF" 
+            Pressed="LF_Pressed" 
+            Released="LF_Released" Margin="170,225,0,0" VerticalAlignment="Top" Height="106" Width="121"/>
+        <local:CustomButton x:Name="clickButton_Copy3" ClickMode="Press" 
+            Content="RF" 
+            Pressed="RF_Pressed" 
+            Released="RF_Released" Margin="605,225,0,0" VerticalAlignment="Top" Height="106" Width="121"/>
+        <local:CustomButton x:Name="clickButton_Copy4" ClickMode="Press" 
+            Content="Left" 
+            Pressed="Left_Pressed" 
+            Released="Left_Released" Margin="170,368,0,0" VerticalAlignment="Top" Height="106" Width="121"/>
+        <local:CustomButton x:Name="clickButton_Copy5" ClickMode="Press" 
+            Content="Right" 
+            Pressed="Right_Pressed" 
+            Released="Right_Released" Margin="604,368,0,0" VerticalAlignment="Top" Height="106" Width="121"/>
+        <local:CustomButton x:Name="clickButton_Copy6" ClickMode="Press" 
+            Content="LB" 
+            Pressed="LB_Pressed" 
+            Released="LB_Released" Margin="170,500,0,0" VerticalAlignment="Top" Height="106" Width="121"/>
+        <local:CustomButton x:Name="clickButton_Copy7" ClickMode="Press" 
+            Content="RB" 
+            Pressed="RB_Pressed" 
+            Released="RB_Released" Margin="604,500,0,0" VerticalAlignment="Top" Height="106" Width="121"/>
+        <Button x:Name="clickButton_Copy8" ClickMode="Press" 
+            Content="High" 
+            Margin="947,225,0,0" VerticalAlignment="Top" Height="106" Width="121" Click="High_Clicked"/>
+        <Button x:Name="clickButton_Copy9" ClickMode="Press" 
+            Content="Medium" 
+            Margin="947,364,0,0" VerticalAlignment="Top" Height="106" Width="121" Click="Medium_Clicked"/>
+        <Button x:Name="clickButton_Copy10" ClickMode="Press" 
+            Content="Low" 
+            Margin="947,518,0,0" VerticalAlignment="Top" Height="106" Width="121" Click="Low_Clicked"/>
+    </Grid>
+</Page>
