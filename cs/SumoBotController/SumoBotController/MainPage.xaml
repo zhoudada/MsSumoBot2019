@@ -8,51 +8,51 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Grid KeyDown="Key_Down" KeyUp="Key_Up">
+    <Grid>
         <local:CustomButton x:Name="clickButton" ClickMode="Press" 
                             Content="Forward" 
                             Pressed="Forward_Pressed" 
-                            Released="Forward_Released" Margin="382,225,0,0" VerticalAlignment="Top" Height="106" Width="121"/>
+                            Released="Forward_Released" Margin="156,330,0,0" VerticalAlignment="Top" Height="38" Width="58"/>
         <local:CustomButton x:Name="clickButton_Copy" ClickMode="Press" 
             Content="Stop" 
             Pressed="Stop_Pressed" 
-            Released="Stop_Released" Margin="382,368,0,0" VerticalAlignment="Top" Height="98" Width="121"/>
+            Released="Stop_Released" Margin="156,382,0,0" VerticalAlignment="Top" Height="35" Width="58"/>
         <local:CustomButton x:Name="clickButton_Copy1" ClickMode="Press" 
             Content="Back" 
             Pressed="Back_Pressed" 
-            Released="Back_Released" Margin="382,500,0,0" VerticalAlignment="Top" Height="97" Width="121"/>
+            Released="Back_Released" Margin="156,429,0,0" VerticalAlignment="Top" Height="34" Width="58"/>
         <local:CustomButton x:Name="clickButton_Copy2" ClickMode="Press" 
             Content="LF" 
             Pressed="LF_Pressed" 
-            Released="LF_Released" Margin="170,225,0,0" VerticalAlignment="Top" Height="106" Width="121"/>
+            Released="LF_Released" Margin="56,330,0,0" VerticalAlignment="Top" Height="38" Width="57"/>
         <local:CustomButton x:Name="clickButton_Copy3" ClickMode="Press" 
             Content="RF" 
             Pressed="RF_Pressed" 
-            Released="RF_Released" Margin="605,225,0,0" VerticalAlignment="Top" Height="106" Width="121"/>
+            Released="RF_Released" Margin="262,330,0,0" VerticalAlignment="Top" Height="38" Width="58"/>
         <local:CustomButton x:Name="clickButton_Copy4" ClickMode="Press" 
             Content="Left" 
             Pressed="Left_Pressed" 
-            Released="Left_Released" Margin="170,368,0,0" VerticalAlignment="Top" Height="106" Width="121"/>
+            Released="Left_Released" Margin="380,429,0,0" VerticalAlignment="Top" Height="38" Width="56"/>
         <local:CustomButton x:Name="clickButton_Copy5" ClickMode="Press" 
             Content="Right" 
             Pressed="Right_Pressed" 
-            Released="Right_Released" Margin="604,368,0,0" VerticalAlignment="Top" Height="106" Width="121"/>
+            Released="Right_Released" Margin="477,429,0,0" VerticalAlignment="Top" Height="38" Width="57"/>
         <local:CustomButton x:Name="clickButton_Copy6" ClickMode="Press" 
             Content="LB" 
             Pressed="LB_Pressed" 
-            Released="LB_Released" Margin="170,500,0,0" VerticalAlignment="Top" Height="106" Width="121"/>
+            Released="LB_Released" Margin="56,429,0,0" VerticalAlignment="Top" Height="38" Width="57"/>
         <local:CustomButton x:Name="clickButton_Copy7" ClickMode="Press" 
             Content="RB" 
             Pressed="RB_Pressed" 
-            Released="RB_Released" Margin="604,500,0,0" VerticalAlignment="Top" Height="106" Width="121"/>
+            Released="RB_Released" Margin="262,429,0,0" VerticalAlignment="Top" Height="38" Width="58"/>
         <Button x:Name="clickButton_Copy8" ClickMode="Press" 
             Content="High" 
-            Margin="947,225,0,0" VerticalAlignment="Top" Height="106" Width="121" Click="High_Clicked"/>
+            Margin="380,330,0,0" VerticalAlignment="Top" Height="38" Width="56" Click="High_Clicked"/>
         <Button x:Name="clickButton_Copy9" ClickMode="Press" 
             Content="Medium" 
-            Margin="947,364,0,0" VerticalAlignment="Top" Height="106" Width="121" Click="Medium_Clicked"/>
+            Margin="477,330,0,0" VerticalAlignment="Top" Height="38" Width="57" Click="Medium_Clicked"/>
         <Button x:Name="clickButton_Copy10" ClickMode="Press" 
             Content="Low" 
-            Margin="947,518,0,0" VerticalAlignment="Top" Height="106" Width="121" Click="Low_Clicked"/>
+            Margin="566,330,0,0" VerticalAlignment="Top" Height="38" Width="58" Click="Low_Clicked"/>
     </Grid>
 </Page>

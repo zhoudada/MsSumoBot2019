@@ -1,4 +1,6 @@
-﻿using BLEConsole;
+﻿#define MOCK
+
+using BLEConsole;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -19,6 +21,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using Windows.UI.Core;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -39,31 +42,49 @@ namespace SumoBotController
             "System.Devices.Aep.Bluetooth.Le.IsConnectable"
         };
 
-        private readonly Dictionary<Windows.System.VirtualKey, Char> _keyboardMap =
-            new Dictionary<Windows.System.VirtualKey, char>
+        private readonly Dictionary<Windows.System.VirtualKey, CommandType> _keyboardMap =
+            new Dictionary<Windows.System.VirtualKey, CommandType>
             {
-                { Windows.System.VirtualKey.W, 'f' },
-                { Windows.System.VirtualKey.S, 's' },
-                { Windows.System.VirtualKey.X, 'b' },
-                { Windows.System.VirtualKey.A, 'l' },
-                { Windows.System.VirtualKey.D, 'r' },
-                { Windows.System.VirtualKey.Q, 'q' },
-                { Windows.System.VirtualKey.E, 'e' },
-                { Windows.System.VirtualKey.Z, 'z' },
-                { Windows.System.VirtualKey.C, 'c' },
-                { Windows.System.VirtualKey.U, 'u' },
-                { Windows.System.VirtualKey.I, 'i' },
-                { Windows.System.VirtualKey.O, 'o' },
+                { Windows.System.VirtualKey.W, CommandType.Forward },
+                { Windows.System.VirtualKey.S, CommandType.Stop },
+                { Windows.System.VirtualKey.X, CommandType.Backward },
+                { Windows.System.VirtualKey.A, CommandType.Left },
+                { Windows.System.VirtualKey.D, CommandType.Right },
+                { Windows.System.VirtualKey.Q, CommandType.LeftForward },
+                { Windows.System.VirtualKey.E, CommandType.RightForward },
+                { Windows.System.VirtualKey.Z, CommandType.LeftBackward },
+                { Windows.System.VirtualKey.C, CommandType.RightBackward },
+                { Windows.System.VirtualKey.U, CommandType.HighSpeed },
+                { Windows.System.VirtualKey.I, CommandType.MediumSpeed },
+                { Windows.System.VirtualKey.O, CommandType.LowSpeed },
+        };
+
+        private readonly Dictionary<CommandType, Char> _commandToMessage = new Dictionary<CommandType, char>
+        {
+            { CommandType.Forward, 'f' },
+            { CommandType.Stop, 's' },
+            { CommandType.Backward, 'b' },
+            { CommandType.Left, 'l' },
+            { CommandType.Right, 'r' },
+            { CommandType.LeftForward, 'q' },
+            { CommandType.RightForward, 'e' },
+            { CommandType.LeftBackward, 'z' },
+            { CommandType.RightBackward, 'c' },
+            { CommandType.HighSpeed, 'u' },
+            { CommandType.MediumSpeed, 'i' },
+            { CommandType.LowSpeed, 'o' },
         };
 
         private bool _isConnected;
         private BluetoothLEDevice _selectedDevice = null;
         private DeviceWatcher _watcher = null;
         private GattCharacteristic _characteristc = null;
-        private readonly KeyManager _keyManager = new KeyManager();
+        private readonly CommandManager _commandManager = new CommandManager();
 
         public void OnSuspended()
         {
+#if MOCK
+#else
             if (_watcher != null && (_watcher.Status == DeviceWatcherStatus.Started ||
                 _watcher.Status == DeviceWatcherStatus.EnumerationCompleted))
             {
@@ -80,9 +101,10 @@ namespace SumoBotController
             _characteristc = null;
 
             _isConnected = false;
-
-            _keyManager.KeyPressed -= OnKeyDown;
-            _keyManager.KeyReleased -= OnKeyUp;
+#endif
+            Window.Current.CoreWindow.KeyDown -= Key_Down;
+            Window.Current.CoreWindow.KeyUp -= Key_Up;
+            _commandManager.SendCommand -= SendCommand;
         }
 
         public void OnResumed()
@@ -92,6 +114,8 @@ namespace SumoBotController
 
         private void Initialize()
         {
+#if MOCK
+#else
             bool deviceFound = false;
             string deviceId = string.Empty;
 
@@ -141,9 +165,10 @@ namespace SumoBotController
                     }
                 }
             }
-
-            _keyManager.KeyPressed += OnKeyDown;
-            _keyManager.KeyReleased += OnKeyUp;
+#endif
+            Window.Current.CoreWindow.KeyDown += Key_Down;
+            Window.Current.CoreWindow.KeyUp += Key_Up;
+            _commandManager.SendCommand += SendCommand;
         }
 
         public MainPage()
@@ -154,142 +179,147 @@ namespace SumoBotController
 
         private async Task Write(Char c)
         {
+#if MOCK
+            Debug.WriteLine($"Write message: {c}");
+#else
             if (_isConnected)
             {
                 IBuffer buffer = Utilities.FormatData(c.ToString(), DataFormat.UTF8);
                 await _characteristc.WriteValueAsync(buffer);
             }
+#endif
         }
 
         private async void Forward_Pressed(object sender, PointerRoutedEventArgs e)
         {
-            await Write('f');
+            await _commandManager.OnDirectionCommandEnter(CommandType.Forward);
         }
 
         private async void Forward_Released(object sender, PointerRoutedEventArgs e)
         {
-            await Write('s');
+            await _commandManager.OnDirectionCommandExit(CommandType.Forward);
         }
 
         private async void Stop_Pressed(object sender, PointerRoutedEventArgs e)
         {
-            await Write('s');
+            await _commandManager.OnDirectionCommandEnter(CommandType.Stop);
         }
 
         private async void Stop_Released(object sender, PointerRoutedEventArgs e)
         {
-            await Write('s');
+            await _commandManager.OnDirectionCommandExit(CommandType.Stop);
         }
 
         private async void Back_Pressed(object sender, PointerRoutedEventArgs e)
         {
-            await Write('b');
+            await _commandManager.OnDirectionCommandEnter(CommandType.Backward);
         }
 
         private async void Back_Released(object sender, PointerRoutedEventArgs e)
         {
-            await Write('s');
+            await _commandManager.OnDirectionCommandExit(CommandType.Backward);
         }
 
         private async void LF_Pressed(object sender, PointerRoutedEventArgs e)
         {
-            await Write('q');
+            await _commandManager.OnDirectionCommandEnter(CommandType.LeftForward);
         }
 
         private async void LF_Released(object sender, PointerRoutedEventArgs e)
         {
-            await Write('s');
+            await _commandManager.OnDirectionCommandExit(CommandType.LeftForward);
         }
 
         private async void RF_Pressed(object sender, PointerRoutedEventArgs e)
         {
-            await Write('e');
+            await _commandManager.OnDirectionCommandEnter(CommandType.RightForward);
         }
 
         private async void RF_Released(object sender, PointerRoutedEventArgs e)
         {
-            await Write('s');
+            await _commandManager.OnDirectionCommandExit(CommandType.RightForward);
         }
 
         private async void LB_Pressed(object sender, PointerRoutedEventArgs e)
         {
-            await Write('z');
+            await _commandManager.OnDirectionCommandEnter(CommandType.LeftBackward);
         }
 
         private async void LB_Released(object sender, PointerRoutedEventArgs e)
         {
-            await Write('s');
+            await _commandManager.OnDirectionCommandExit(CommandType.LeftBackward);
         }
 
         private async void RB_Pressed(object sender, PointerRoutedEventArgs e)
         {
-            await Write('c');
+            await _commandManager.OnDirectionCommandEnter(CommandType.RightBackward);
         }
 
         private async void RB_Released(object sender, PointerRoutedEventArgs e)
         {
-            await Write('s');
+            await _commandManager.OnDirectionCommandExit(CommandType.RightBackward);
         }
 
         private async void Left_Pressed(object sender, PointerRoutedEventArgs e)
         {
-            await Write('l');
+            await _commandManager.OnDirectionCommandEnter(CommandType.Left);
         }
 
         private async void Left_Released(object sender, PointerRoutedEventArgs e)
         {
-            await Write('s');
+            await _commandManager.OnDirectionCommandExit(CommandType.Left);
         }
 
         private async void Right_Pressed(object sender, PointerRoutedEventArgs e)
         {
-            await Write('r');
+            await _commandManager.OnDirectionCommandEnter(CommandType.Right);
         }
 
         private async void Right_Released(object sender, PointerRoutedEventArgs e)
         {
-            await Write('s');
+            await _commandManager.OnDirectionCommandExit(CommandType.Right);
         }
 
         private async void High_Clicked(object sender, RoutedEventArgs e)
         {
-            await Write('u');
+            await _commandManager.OnSpeedControlCommand(CommandType.HighSpeed);
         }
 
         private async void Medium_Clicked(object sender, RoutedEventArgs e)
         {
-            await Write('i');
+            await _commandManager.OnSpeedControlCommand(CommandType.MediumSpeed);
         }
 
         private async void Low_Clicked(object sender, RoutedEventArgs e)
         {
-            await Write('o');
+            await _commandManager.OnSpeedControlCommand(CommandType.LowSpeed);
         }
 
-        private async void Key_Down(object sender, KeyRoutedEventArgs e)
+        private async void Key_Down(CoreWindow sender, KeyEventArgs e)
         {
-            await _keyManager.OnKeyPressed(sender, e.Key);
-        }
-
-        private async void Key_Up(object sender, KeyRoutedEventArgs e)
-        {
-            await _keyManager.OnKeyReleased(sender, e.Key);
-        }
-
-        private async Task OnKeyDown(object sender, Windows.System.VirtualKey key)
-        {
-            char command;
-            if (!_keyboardMap.TryGetValue(key, out command))
+            CommandType command;
+            if (!_keyboardMap.TryGetValue(e.VirtualKey, out command))
             {
                 return;
             }
 
-            await Write(command);
+            await _commandManager.OnGeneralCommandEnter(command);
         }
 
-        private async Task OnKeyUp(object sender, Windows.System.VirtualKey key)
+        private async void Key_Up(CoreWindow sender, KeyEventArgs e)
         {
-            await Write('s');
+            CommandType command;
+            if (!_keyboardMap.TryGetValue(e.VirtualKey, out command))
+            {
+                return;
+            }
+
+            await _commandManager.OnGeneralCommandExit(command);
+        }
+
+        private async Task SendCommand(CommandType command)
+        {
+            await Write(_commandToMessage[command]);
         }
     }
 }
