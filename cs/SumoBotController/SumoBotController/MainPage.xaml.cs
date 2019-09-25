@@ -1,4 +1,4 @@
-﻿#define MOCK
+﻿//#define MOCK
 
 using BLEConsole;
 using System;
@@ -22,6 +22,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Windows.UI.Core;
+using System.Threading;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -45,11 +46,11 @@ namespace SumoBotController
         private readonly Dictionary<Windows.System.VirtualKey, CommandType> _keyboardMap =
             new Dictionary<Windows.System.VirtualKey, CommandType>
             {
-                { Windows.System.VirtualKey.W, CommandType.Forward },
+                { Windows.System.VirtualKey.Up, CommandType.Forward },
                 { Windows.System.VirtualKey.S, CommandType.Stop },
-                { Windows.System.VirtualKey.X, CommandType.Backward },
-                { Windows.System.VirtualKey.A, CommandType.Left },
-                { Windows.System.VirtualKey.D, CommandType.Right },
+                { Windows.System.VirtualKey.Down, CommandType.Backward },
+                { Windows.System.VirtualKey.Left, CommandType.Left },
+                { Windows.System.VirtualKey.Right, CommandType.Right },
                 { Windows.System.VirtualKey.Q, CommandType.LeftForward },
                 { Windows.System.VirtualKey.E, CommandType.RightForward },
                 { Windows.System.VirtualKey.Z, CommandType.LeftBackward },
@@ -116,29 +117,26 @@ namespace SumoBotController
         {
 #if MOCK
 #else
-            bool deviceFound = false;
+            ManualResetEvent deviceFoundSignal = new ManualResetEvent(false);
             string deviceId = string.Empty;
 
             _watcher = DeviceInformation.CreateWatcher(_aqsAllBLEDevices, _requestedBLEProperties, DeviceInformationKind.AssociationEndpoint);
             _watcher.Added += (DeviceWatcher sender, DeviceInformation devInfo) =>
             {
                 Debug.WriteLine(devInfo.Name);
-                if (devInfo.Name == "HC-08")
+                if (devInfo.Name == "HC-08" && devInfo.Id == "BluetoothLE#BluetoothLE9c:b6:d0:97:8e:0c-88:3f:4a:d8:34:5d")
                 {
                     deviceId = devInfo.Id;
                     Debug.WriteLine($"Found device. ID: {deviceId}. Name: {devInfo.Name}.");
-                    deviceFound = true;
+                    deviceFoundSignal.Set();
                 }
-                //if (_deviceList.FirstOrDefault(d => d.Id.Equals(devInfo.Id) || d.Name.Equals(devInfo.Name)) == null) _deviceList.Add(devInfo);
             };
             _watcher.Updated += (_, __) => { }; // We need handler for this event, even an empty!
             _watcher.EnumerationCompleted += (DeviceWatcher sender, object arg) => { sender.Stop(); };
             _watcher.Stopped += (DeviceWatcher sender, object arg) => { };
             _watcher.Start();
 
-            while (!deviceFound)
-            {
-            }
+            deviceFoundSignal.WaitOne();
 
             _selectedDevice = BluetoothLEDevice.FromIdAsync(deviceId).GetAwaiter().GetResult();
             GattDeviceServicesResult result = _selectedDevice.GetGattServicesAsync(BluetoothCacheMode.Uncached).GetAwaiter().GetResult();
