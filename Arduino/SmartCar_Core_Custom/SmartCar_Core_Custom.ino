@@ -132,7 +132,7 @@ void right(){
 }
 
 void leftForward(){
-  analogWrite(ENA, LOW_SPEED);
+  analogWrite(ENA, 0);
   analogWrite(ENB, HIGH_SPEED);
   digitalWrite(IN1,LOW);
   digitalWrite(IN2,HIGH);
@@ -143,7 +143,7 @@ void leftForward(){
 
 void rightForward(){
   analogWrite(ENA, HIGH_SPEED);
-  analogWrite(ENB, LOW_SPEED);
+  analogWrite(ENB, 0);
   digitalWrite(IN1,HIGH);
   digitalWrite(IN2,LOW);
   digitalWrite(IN3,HIGH);
